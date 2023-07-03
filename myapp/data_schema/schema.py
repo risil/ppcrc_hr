@@ -25,3 +25,8 @@ class UserPut(Schema):
     aadhar = fields.Str()
     pancard = fields.Str()
     access_level = fields.Int()
+
+class ManagerSchema(Schema):
+    _id = fields.Str(required=True)
+    user = fields.Str(required=True)
+    designation = fields.Str()
