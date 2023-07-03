@@ -1,30 +1,50 @@
+from flask import Flask, request
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from myapp.response import APIResponse
 from myapp.data_schema.schema import ManagerSchema
 from myapp.model.models import Manager
-from uuid import uuid4
 
-managers_blueprint = Blueprint("managers", __name__, url_prefix="/api", description="Manager Operations")
+manager_blueprint = Blueprint("manager", __name__, url_prefix="/manager")
 
-@managers_blueprint.route('/managers')
-class Managers(MethodView):
-
-    def get(self):
-        managers = Manager.objects().all()
-        return APIResponse.respond(managers, "Successful", 200)
-
-    @managers_blueprint.arguments(ManagerSchema)
+class ManagerResource(MethodView):
+    @manager_blueprint.arguments(ManagerSchema)
+    @manager_blueprint.response(201, ManagerSchema)
     def post(self, manager_data):
-        manager = Manager(
-            _id=str(uuid4().hex),
-            user=manager_data.get("user"),
-            designation=manager_data.get("designation"),
-            created_at=None,
-            created_by=None,
-            updated_at=None,
-            updated_by=None,
-            is_deleted=0
-        )
+        manager = Manager(**manager_data)
         manager.save()
-        return APIResponse.respond(manager, "Manager created successfully", 200)
+        return APIResponse.respond(manager.to_mongo().to_dict(), "Manager created successfully!", 201)
+
+    @manager_blueprint.arguments(ManagerSchema)
+    @manager_blueprint.response(200, ManagerSchema)
+    def put(self, manager_data):
+        manager_id = manager_data["_id"]
+        manager = Manager.objects.get(_id=manager_id)
+        manager.update(**manager_data)
+        manager.reload()
+        return APIResponse.respond(manager.to_mongo().to_dict(), "Manager updated successfully!", 200)
+
+    @manager_blueprint.response(204)
+    def delete(self, manager_id):
+        manager = Manager.objects.get(_id=manager_id)
+        manager.delete()
+        return APIResponse.respond({}, "Manager deleted successfully!", 204)
+
+    @manager_blueprint.response(200, ManagerSchema)
+    def get(self, manager_id):
+        manager = Manager.objects.get(_id=manager_id)
+        return APIResponse.respond(manager.to_mongo().to_dict(), "Manager retrieved successfully!", 200)
+
+    @manager_blueprint.response(200, ManagerSchema(many=True))
+    def get_all(self):
+        managers = Manager.objects.all()
+        return APIResponse.respond(managers.to_mongo().to_dict(), "Managers retrieved successfully!", 200)
+
+manager_blueprint.add_route(ManagerResource.as_view(), "/<manager_id>")
+manager_blueprint.add_route(ManagerResource.as_view(), "")
+
+app = Flask(__name__)
+app.register_blueprint(manager_blueprint)
+
+if __name__ == "__main__":
+    app.run()
