@@ -21,7 +21,7 @@ class Users(MethodView):
 
         # Calculate the number of documents to skip based on the page size and number
         skip_count = (page_number - 1) * page_size
-        print(request_data)
+        
         # Apply pagination to the query
         username = request_data.get('username', None)
         if username:
