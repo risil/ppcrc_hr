@@ -27,16 +27,6 @@ class UserPut(Schema):
     access_level = fields.Int()
 
 class ManagerSchema(Schema):
-    id = fields.String()
-    user = fields.String()
-    designation = fields.String()
-    created_at = fields.DateTime()
-    created_by = fields.String()
-    updated_at = fields.DateTime()
-    updated_by = fields.String()
-    is_deleted = fields.Integer()
-
-class ManagerPutSchema(Schema):
     id = fields.String(required=True)
     user = fields.String()
     designation = fields.String()
