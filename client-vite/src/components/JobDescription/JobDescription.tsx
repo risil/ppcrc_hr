@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 interface JobDescriptionData {
-  jobTitle: number;
+  jobId: number;
+  jobTitle: string;
   recruiter: string;
   jobDescription: string;
   startingSalary: string;
@@ -11,14 +12,15 @@ interface JobDescriptionData {
   education: string[];
   skills: string[];
   experience: string;
-  language: string;
-  extraDetails: string;
+  language: string[];
+  extraDetails: string[];
   location: string;
 }
 
 const JobDescription: React.FC = () => {
   const [formData, setFormData] = useState<JobDescriptionData>({
-    jobTitle: 0,
+    jobId: 0,
+    jobTitle: "",
     recruiter: "",
     jobDescription: "",
     startingSalary: "",
@@ -27,11 +29,33 @@ const JobDescription: React.FC = () => {
     education: [],
     skills: [],
     experience: "",
-    language: "",
-    extraDetails: "",
+    language: [],
+    extraDetails: [],
     location: "",
   });
   const [newSkill, setNewSkill] = useState<string>("");
+  const [newDetail, setNewDetail] = useState<string>("");
+  const [newLanguage, setNewLanguage] = useState<string>("");
+  const [uId, setUId] = useState(null);
+
+  useEffect(() => {
+    // Call the fetch function here
+    fetch("http://127.0.0.1:5000/users")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const fetchedUId = data.uId;
+        setUId(fetchedUId);
+        console.log(uId);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  }, []);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,6 +64,39 @@ const JobDescription: React.FC = () => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+  const handleAddDetail = () => {
+    if (newDetail && !formData.extraDetails.includes(newDetail)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        extraDetails: [...prevData.extraDetails, newDetail],
+      }));
+      setNewDetail("");
+    }
+  };
+
+  const handleRemoveDetail = (detail: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      extraDetails: prevData.extraDetails.filter((d) => d !== detail),
+    }));
+  };
+
+  const handleAddLanguage = () => {
+    if (newLanguage && !formData.language.includes(newLanguage)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        language: [...prevData.language, newLanguage],
+      }));
+      setNewLanguage("");
+    }
+  };
+
+  const handleRemoveLanguage = (language: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      language: prevData.language.filter((lang) => lang !== language),
     }));
   };
 
@@ -59,34 +116,6 @@ const JobDescription: React.FC = () => {
       skills: prevData.skills.filter((s) => s !== skill),
     }));
   };
-
-  //   const handleInputChange = (
-  //     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  //   ) => {
-  //     const { name, value } = event.target;
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       [name]: value,
-  //     }));
-  //   };
-
-  //   const handleSkillsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //     const selectedSkills = Array.from(
-  //       event.target.selectedOptions,
-  //       (option) => option.value
-  //     );
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       skills: selectedSkills,
-  //     }));
-  //   };
-
-  //   const handleRemoveSkill = (skill: string) => {
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       skills: prevData.skills.filter((s) => s !== skill),
-  //     }));
-  //   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -330,18 +359,44 @@ const JobDescription: React.FC = () => {
           </div>
 
           <div className="mb-4">
+            {/* ... */}
             <label className="block text-gray-700 font-semibold mb-1">
               Extra Details
             </label>
-            <textarea
-              name="extraDetails"
-              value={formData.extraDetails}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded resize-none"
-              rows={3}
-            />
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newDetail}
+                onChange={(e) => setNewDetail(e.target.value)}
+                placeholder="Type an extra detail"
+                className="w-full p-2 border rounded"
+              />
+              <button
+                type="button"
+                onClick={handleAddDetail}
+                className="ml-2 w-1/4 bg-blue-500 text-white px-3 py-2 rounded-lg"
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {formData.extraDetails.map((detail) => (
+                <div
+                  key={detail}
+                  className="bg-gray-500 text-white p-2 rounded-xl flex items-center"
+                >
+                  {detail}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveDetail(detail)}
+                    className="ml-2 text-white font-semibold focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 font-semibold mb-1">
               Experience
@@ -356,16 +411,43 @@ const JobDescription: React.FC = () => {
           </div>
 
           <div className="mb-4">
+            {/* ... */}
             <label className="block text-gray-700 font-semibold mb-1">
-              Language
+              Languages
             </label>
-            <input
-              type="text"
-              name="language"
-              value={formData.language}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded"
-            />
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={newLanguage}
+                onChange={(e) => setNewLanguage(e.target.value)}
+                placeholder="Type a language"
+                className="w-full p-2 border rounded"
+              />
+              <button
+                type="button"
+                onClick={handleAddLanguage}
+                className="ml-2 w-1/4 bg-blue-500 text-white px-3 py-2 rounded-lg"
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {formData.language.map((language) => (
+                <div
+                  key={language}
+                  className="bg-gray-500 text-white p-2 rounded-xl flex items-center"
+                >
+                  {language}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveLanguage(language)}
+                    className="ml-2 text-white font-semibold focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mb-4">
@@ -396,3 +478,31 @@ const JobDescription: React.FC = () => {
 };
 
 export default JobDescription;
+
+//   const handleInputChange = (
+//     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+//   ) => {
+//     const { name, value } = event.target;
+//     setFormData((prevData) => ({
+//       ...prevData,
+//       [name]: value,
+//     }));
+//   };
+
+//   const handleSkillsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+//     const selectedSkills = Array.from(
+//       event.target.selectedOptions,
+//       (option) => option.value
+//     );
+//     setFormData((prevData) => ({
+//       ...prevData,
+//       skills: selectedSkills,
+//     }));
+//   };
+
+//   const handleRemoveSkill = (skill: string) => {
+//     setFormData((prevData) => ({
+//       ...prevData,
+//       skills: prevData.skills.filter((s) => s !== skill),
+//     }));
+//   };

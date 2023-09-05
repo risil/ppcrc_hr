@@ -125,9 +125,9 @@ const EmployeeRegister: React.FC = () => {
     }
   };
 
-  const closeAlert = () => {
-    setErrorMessage("");
-  };
+  // const closeAlert = () => {
+  //   setErrorMessage("");
+  // };
 
   const validateCompanyName = (companyName: string) => {
     if (!companyName) {
@@ -438,14 +438,14 @@ const EmployeeRegister: React.FC = () => {
           </div>
         </form>
       </div>
-      {errorMessage && (
+      {/* {errorMessage && (
         <div className="custom-alert">
           <p className="error-message">{errorMessage}</p>
           <button className="close-button" onClick={closeAlert}>
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

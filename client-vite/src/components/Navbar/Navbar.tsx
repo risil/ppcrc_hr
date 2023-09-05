@@ -18,10 +18,10 @@ const Navbar = () => {
       </div>
       <div className="menu flex items-center gap-8">
         <Link to="/jobs">
-          <li className="menuList text-[#6f6f6f] hover:text-blueColor">Jobs</li>
+          <li className="menuList text-[#3a3a3a] hover:text-blueColor">Jobs</li>
         </Link>
         <Link to="/companies">
-          <li className="menuList text-[#6f6f6f] hover:text-blueColor">
+          <li className="menuList text-[#3c3b3b] hover:text-blueColor">
             Companies
           </li>
         </Link>
@@ -35,7 +35,7 @@ const Navbar = () => {
 
         <div className="h-8 w-0.5 bg-gray-400"></div>
         <Link to="/employerlogin">
-          <li className="menuList text-[#6f6f6f] hover:text-blueColor">
+          <li className="menuList text-[#3c3b3b] hover:text-blueColor">
             Employers
           </li>
         </Link>

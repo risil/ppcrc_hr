@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const EmployerLogin: React.FC = () => {
+interface EmployerLoginProps {
+  onLogin: (isEmployerLogin: boolean) => void;
+}
+const EmployerLogin: React.FC<EmployerLoginProps> = ({ onLogin }) => {
   // const [companyCode, setCompanyCode] = useState("");
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -43,16 +45,19 @@ const EmployerLogin: React.FC = () => {
     try {
       const response = await axios.post("http://localhost:5000/login", {
         username: email,
-        // email: email,
         password: password,
       });
-      // if(response.data.status===201)
-      // window.location.href = "/jobdescription";
-      console.log("Login successful:", response.data);
-      navigate("/jobdescription");
-      // console.log("Login successful:");
+
+      if (response.data.status === 200) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("isEmployer", "true");
+        onLogin(true); // Pass true to indicate employer login
+        navigate("/employerdashboard");
+      } else {
+        console.log("Login failed. Status:", response.data.message);
+        setErrorMessage(response.data.message);
+      }
     } catch (error: any) {
-      // Handle error response
       if (error.response) {
         setErrorMessage(error.response.data.message);
       } else {
@@ -60,6 +65,7 @@ const EmployerLogin: React.FC = () => {
       }
     }
   };
+
   // const validateCompanyCode = (companyCode: string) => {
   //   if (!companyCode) {
   //     return "Company code is required";
@@ -96,6 +102,10 @@ const EmployerLogin: React.FC = () => {
     }
 
     return "";
+  };
+
+  const closeAlert = () => {
+    setErrorMessage("");
   };
 
   return (
@@ -188,7 +198,14 @@ const EmployerLogin: React.FC = () => {
 
           <button
             type="submit"
-            className="mt-8 bg-blue-500 text-white py-2 px-4 rounded-lg transition-colors duration-300 w-full"
+            className={`mt-8 bg-blue-500 text-white py-2 px-4 rounded-lg transition-colors duration-300 w-full`}
+            style={{
+              cursor:
+                emailError !== "" || passwordError !== ""
+                  ? "not-allowed"
+                  : "pointer",
+            }}
+            disabled={emailError !== "" || passwordError !== ""}
           >
             Login
           </button>
@@ -198,6 +215,14 @@ const EmployerLogin: React.FC = () => {
             Signup
           </button>
         </Link>
+        {errorMessage && (
+          <div className="custom-alert">
+            <p className="error-message">{errorMessage}</p>
+            <button className="close-button" onClick={closeAlert}>
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

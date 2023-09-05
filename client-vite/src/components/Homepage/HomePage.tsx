@@ -113,14 +113,14 @@ const HomePage: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="mt-20 w-1/2 mx-auto flex items-center justify-between py-4 px-6  rounded-xl  ">
+      {/* <div className="mt-20 w-1/2 mx-auto flex items-center justify-between py-4 px-6  rounded-xl  ">
         <h1 className="text-2xl font-bold">Let the employers find you</h1>
         <Link to="/uploadresume">
           <button className="px-4 py-2 bg-blue-500 text-white rounded-2xl">
             Upload Resume
           </button>
         </Link>
-      </div>
+      </div> */}
       <div className="topCompaniesContainer mt-16">
         <h1 className="text-xl font-bold mb-4">Top Companies hiring now</h1>
 

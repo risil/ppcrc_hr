@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useState } from "react";
 import HomePage from "./components/Homepage/HomePage";
 // import Login from "./components/Login/Login";
 import Login1 from "./components/Login/Login1";
@@ -12,17 +13,59 @@ import EmployerLogin from "./components/Login/EmployerLogin";
 import JobDetails from "./components/Homepage/JobDetails";
 // import Register1 from "./components/Register/Register1";
 import EmployeeRegister from "./components/Register/EmployeeRegister";
+import Navbar1 from "./components/Navbar/Navbar1";
+import Navbar2 from "./components/Navbar/Navbar2";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [isEmployer, setIsEmployer] = useState(
+    localStorage.getItem("isEmployer") === "true"
+  );
+
+  // Define a function to handle user login
+  const handleUserLogin = () => {
+    setIsLoggedIn(true);
+    setIsEmployer(false); // Set isEmployer to false for user login
+  };
+
+  // Define a function to handle employer login
+  const handleEmployerLogin = (isEmployerLogin: boolean) => {
+    setIsLoggedIn(true);
+    setIsEmployer(isEmployerLogin); // Set isEmployer based on the argument
+  };
+
   return (
     <BrowserRouter>
       <div className="App">
-        <Navbar />
+        {/* {isLoggedIn ? <Navbar1 /> : <Navbar />} */}
+        {/* <Navbar /> */}
         {/* <HomePage /> */}
+        {/* <Routes> */}
+        {/* <Route path="/userlogin" element={<Login />} /> */}
+        {/* <Route path="/userlogin" element={<Login1 />} /> */}
+        {!isLoggedIn && <Navbar />}{" "}
+        {/* Display Navbar if no one is logged in */}
+        {isLoggedIn && !isEmployer && <Navbar1 />}{" "}
+        {/* Display Navbar1 for users */}
+        {isLoggedIn && isEmployer && <Navbar2 />}{" "}
+        {/* Display Navbar2 for employers */}
         <Routes>
-          {/* <Route path="/userlogin" element={<Login />} /> */}
-          <Route path="/userlogin" element={<Login1 />} />
-          <Route path="/employerlogin" element={<EmployerLogin />} />
+          <Route
+            path="/userlogin"
+            element={<Login1 onLogin={handleUserLogin} />}
+          />
+          <Route
+            path="/employerlogin"
+            element={<EmployerLogin onLogin={handleEmployerLogin} />}
+          />
+          {/* <Route path="/userlogin" element={<Login1 onLogin={handleLogin} />} />
+          <Route
+            path="/employerlogin"
+            element={<EmployerLogin onLogin={handleLogin} />}
+          /> */}
           <Route path="/jobdescription" element={<JobDescription />} />
           <Route path="/jobdetails" element={<JobDetails />} />
           <Route path="/employerregistration" element={<EmployeeRegister />} />
@@ -34,10 +77,12 @@ function App() {
 
           <Route path="/companies" element={<Companies />} />
           <Route path="/uploadresume" element={<UploadResume />} />
+          <Route path="/employerdashboard" element={<Dashboard />} />
 
           {/* <Route path="/api/login" element={<Login />} />
           <Route path="/api/register" element={<Register />} /> */}
         </Routes>
+        {/* {isLoggedIn ? <Navbar2 /> : null} */}
       </div>
     </BrowserRouter>
   );
