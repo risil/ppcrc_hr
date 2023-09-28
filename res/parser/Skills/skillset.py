@@ -1,14 +1,11 @@
-import os
-script_dir = os.path.dirname(os.path.abspath(_file_))
-
-skills_filename = os.path.join(script_dir, "../Skills/all_skills.txt")
-
 def read_skills_file(filename, encoding='utf-8'):
     with open(filename, 'r', encoding=encoding) as file:
         skills_list = [line.strip().lower() for line in file]
     return skills_list
+import os
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-skills_filename = 'parser/Skills/all_skills.txt'
+skills_filename = os.path.join(script_dir, "../Skills/all_skills.txt")
 
 import re
 

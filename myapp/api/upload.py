@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from myapp.model.models import Resume
 from myapp.data_schema.schema import *
 from myapp.response import APIResponse
+from myapp import resumeParser
 
 app = Flask(__name__)
 
@@ -17,6 +18,9 @@ def allowed_file(filename):
 
 @app.route('/upload', methods=['POST'])
 def upload_resume():
+    file = request.files['file']
+    resumes = resumeParser(file)
+
     # Check if a file was uploaded
     if 'file' not in request.files:
         return jsonify({'message': 'No file part'}), 400

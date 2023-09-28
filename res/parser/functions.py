@@ -2,26 +2,13 @@ import PyPDF2
 import re
 import spacy
 from spacy.matcher import Matcher
-from parser.Skills.skillset import skills_list
-from parser.constraints import EDUCATION,STOPWORDS
+from .Skills.skillset import skills_list
+from .constraints import EDUCATION,STOPWORDS
 from datetime import datetime
 # load pre-trained model
 nlp = spacy.load('en_core_web_sm')
 
-# initialize matcher with a vocab
 matcher = Matcher(nlp.vocab)
-
-# def extract_text_from_pdf(pdf_file_path):
-#     with open(pdf_file_path, 'rb') as file:
-#         pdf_reader = PyPDF2.PdfReader(file)
-#         num_pages = len(pdf_reader.pages)
-
-#         text = ""
-#         for page_num in range(num_pages):
-#             page = pdf_reader.pages[page_num]
-#             text += page.extract_text()
-
-#     return text
 
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
@@ -71,34 +58,7 @@ def extract_name(resume_text):
 def extract_skills(resume_text):
     nlp_text = nlp(resume_text)
 
-    # removing stop words and implementing word tokenization
     tokens = [token.text for token in nlp_text if not token.is_stop]
-#     skills = ["machine learning",
-#              "deep learning",
-#              "nlp",
-#              "natural language processing",
-#              "mysql",
-#              "sql",
-#              "django",
-#              "computer vision",
-#               "tensorflow",
-#              "opencv",
-#              "mongodb",
-#              "artificial intelligence",
-#              "ai",
-#              "flask",
-#              "robotics",
-#              "data structures",
-#              "python",
-#              "c++",
-#               "java",
-#              "matlab",
-#              "css",
-#              "html",
-#              "github",
-#              "php","hadoop ecosystem", "aws cloud", "cloudera administration", "spark", "multi cloud",
-# "active directory", "sentry", "linux"]
-#
     skillset = []
     skills_list
     # check for one-grams
