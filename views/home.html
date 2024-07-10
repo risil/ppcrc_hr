@@ -1,0 +1,239 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to Your Dashboard</h1>
+        <div id="userInfo">
+            <p>Welcome, <span id="userEmail"></span>!</p>
+        </div>
+        <div class="dashboard-content">
+            <h2>Your Activities</h2>
+            <ul>
+                <li>Activity 1</li>
+                <li>Activity 2</li>
+                <li>Activity 3</li>
+            </ul>
+        </div>
+        <button id="logoutButton">Logout</button>
+    </div>
+    <script src="/js/main.js"></script>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Job Form</h2>
+        <form id="jobForm">
+            <div class="form-group">
+                <label for="jobName">Job Name:</label>
+                <input type="text" id="jobName" name="jobName" required>
+            </div>
+            <div class="form-group">
+                <label for="jobDescription">Job Description:</label>
+                <textarea id="jobDescription" name="jobDescription" rows="4" required></textarea>
+            </div>
+        </form>
+        <table id="criteriaTable">
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <th>Dropdown</th>
+                    <th>Weight</th>
+                    <th>M/E/P/O</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="criteria"></td>
+                    <td>
+                        <select name="dropdown">
+                            <option value="option1">Option 1</option>
+                            <option value="option2">Option 2</option>
+                            <option value="option3">Option 3</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="weight"></td>
+                    <td><input type="text" name="mepo"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" id="addRowButton">Add Row</button><br><br>
+
+        <label for="skills">Skills:</label>
+        <select id="skills" name="skills" multiple>
+            <option value="HTML">HTML</option>
+            <option value="CSS">CSS</option>
+            <option value="JS">JavaScript</option>
+        </select><br><br>
+
+
+        <button type="submit" form="jobForm">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("addRowButton").addEventListener("click", function () {
+            const table = document.getElementById("criteriaTable").getElementsByTagName("tbody")[0];
+            const newRow = document.createElement("tr");
+
+            newRow.innerHTML = `
+                <td><input type="text" name="criteria"></td>
+                <td>
+                    <select name="dropdown">
+                        <option value="option1">Option 1</option>
+                        <option value="option2">Option 2</option>
+                        <option value="option3">Option 3</option>
+                    </select>
+                </td>
+                <td><input type="text" name="weight"></td>
+                <td><input type="text" name="mepo"></td>
+            `;
+
+            table.appendChild(newRow);
+        });
+
+        document.getElementById("jobForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const jobName = document.getElementById("jobName").value;
+            const jobDescription = document.getElementById("jobDescription").value;
+            const criteria = Array.from(document.querySelectorAll('input[name="criteria"]')).map(input => input.value);
+            const dropdowns = Array.from(document.querySelectorAll('select[name="dropdown"]')).map(select => select.value);
+            const weights = Array.from(document.querySelectorAll('input[name="weight"]')).map(input => input.value);
+            const mepo = Array.from(document.querySelectorAll('input[name="mepo"]')).map(input => input.value);
+            const skills = Array.from(document.getElementById('skills').selectedOptions).map(option => option.value);
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `
+                <h2>Job Details</h2>
+                <p><strong>Job Name:</strong> ${jobName}</p>
+                <p><strong>Job Description:</strong> ${jobDescription}</p>
+                <h3>Criteria</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Dropdown</th>
+                            <th>Weight</th>
+                            <th>M/E/P/O</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${criteria.map((crit, index) => `
+                            <tr>
+                                <td>${crit}</td>
+                                <td>${dropdowns[index]}</td>
+                                <td>${weights[index]}</td>
+                                <td>${mepo[index]}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                 <p><strong>Skills:</strong> ${skills.join(', ')}</p>
+            `;
+        });
+    </script>
+</body>
+
+</html>
